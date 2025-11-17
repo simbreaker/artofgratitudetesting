@@ -25,7 +25,13 @@ jobs:
       run: npx playwright install --with-deps chromium
       
     - name: Run Playwright tests
-      run: npm test
+      # Note: Uses fallback values if secrets are not set. 
+      # For better security, add EMAIL and PASSWORD as GitHub Secrets when you have access.
+      env:
+        BASE_URL: ${{ secrets.BASE_URL || 'https://www.theartofgratitude.org' }}
+        EMAIL: ${{ secrets.EMAIL || 'dixit.bedi@gmail.com' }}
+        PASSWORD: ${{ secrets.PASSWORD || 'kFaeFUXpYap2wn' }}
+      run: npm test -- --project=chromium
       
     - uses: actions/upload-artifact@v4
       if: always()

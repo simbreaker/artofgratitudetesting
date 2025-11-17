@@ -70,15 +70,13 @@ test.describe('Critical Path E2E Test', () => {
     const supportersPage = new SupportersPage(page);
 
     await page.goto(`${authConfig.baseUrl}/dashboard`);
-    await page.pause();
     await dashboardPage.expectWelcomeHeadingVisible();
 
     const supporterData = generateSupporterData();
 
     await supportersPage.openFromNavigation();
     await supportersPage.addSupporter(supporterData);
-    await page.pause();
-    // await supportersPage.expectSupporterInList(supporterData);
+    await supportersPage.expectSupporterInList(supporterData);
 
     await context.close();
   });

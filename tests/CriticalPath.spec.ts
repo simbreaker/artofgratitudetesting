@@ -11,7 +11,7 @@ const STORAGE_STATE_PATH = path.join(process.cwd(), 'storage-states', 'auth.json
 test.describe('Critical Path E2E Test', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('Verify The Art of Gratitude login via UI and API', async ({ page }) => {
+  test('Verify - Login via UI and API', async ({ page }) => {
     const loginPage = new LoginPage(page);
     const dashboardPage = new DashboardPage(page);
 
@@ -63,7 +63,7 @@ test.describe('Critical Path E2E Test', () => {
     await page.context().storageState({ path: STORAGE_STATE_PATH });
   });
 
-  test('create a new supporter', async ({ browser }) => {
+  test('Verify - Create a new supporter', async ({ browser }) => {
     const context = await browser.newContext({ storageState: STORAGE_STATE_PATH });
     const page = await context.newPage();
     const dashboardPage = new DashboardPage(page);
@@ -79,6 +79,31 @@ test.describe('Critical Path E2E Test', () => {
     await supportersPage.expectSupporterInList(supporterData);
 
     await context.close();
+  });
+
+  test('Verify - Search and delete a supporter', async ({ browser }) => {
+    const context = await browser.newContext({ storageState: STORAGE_STATE_PATH });
+    const page = await context.newPage();
+    const dashboardPage = new DashboardPage(page);
+    const supportersPage = new SupportersPage(page);
+    page.on('dialog', dialog => dialog.accept());
+  
+    await page.goto(`${authConfig.baseUrl}/dashboard`);
+    await dashboardPage.expectWelcomeHeadingVisible();
+    await supportersPage.openFromNavigation();
+    
+    // Generate supporter data for this test
+    const supporterData = generateSupporterData();
+    
+    await dashboardPage.searchForSupporter("auto");
+    await dashboardPage.editSupporter();
+    
+    // Delete supporter - the native browser alert is automatically handled by deleteSupporter()
+    const confirmationMessage = await dashboardPage.deleteSupporter(true); // true = confirm deletion
+    console.log('Deletion confirmation message:', confirmationMessage);
+    
+    await context.close();
+  
   });
 });
 

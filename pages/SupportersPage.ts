@@ -125,6 +125,7 @@ export class SupportersPage extends BasePage {
     // Wait for selection to be applied
     await this.page.waitForTimeout(500);
   }
+
 }
 
 
